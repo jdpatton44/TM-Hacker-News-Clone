@@ -11,5 +11,5 @@ export default function Title ({url, title, id}) {
 Title.propTypes = {
     url: PropTypes.string,
     title: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
 }
