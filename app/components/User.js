@@ -1,69 +1,99 @@
-import React from 'react'
-import Title from './Title'
-import Loading from './Loading'
-import PostList from './PostList'
-import queryString from 'query-string'
-import { fetchUser, fetchPosts} from '../utils/api'
-import { formatDate } from '../utils/helpers'
+import React from 'react';
+import queryString from 'query-string';
+import Title from './Title';
+import Loading from './Loading';
+import PostList from './PostList';
+import { fetchUser, fetchPosts } from '../utils/api';
+import { formatDate } from '../utils/helpers';
 
-export default class User extends React.Component {
-    state={
-        user: null,
-        loadingUser: true,
-        posts: null,
-        loadingPosts: true,
-        error: null,
-    }
+function userReducer(state, action) {
+  if (action.type === 'fetch') {
+    return {
+      ...state,
+      loadingUser: true,
+      loadingPosts: true,
+    };
+  }
+  if (action.type === 'user') {
+    return {
+      ...state,
+      user: action.user,
+      loadingUser: false,
+    };
+  }
+  if (action.type === 'posts') {
+    return {
+      ...state,
+      posts: action.posts,
+      loadingPosts: false,
+    };
+  }
+  if (action.type === 'error') {
+    return {
+      ...state,
+      error: action.error,
+      loadingUser: false,
+      loadingPosts: false,
+    };
+  }
+  throw new Error('That action type is not supported.');
+}
 
-    componentDidMount() {
-        const { id } = queryString.parse(this.props.location.search)
-    
-        fetchUser(id)
-          .then((user) => {
-            this.setState({ user, loadingUser: false})
-    
-            return fetchPosts(user.submitted.slice(0, 30))
-          })
-          .then((posts) => this.setState({
-            posts,
-            loadingPosts: false,
-            error: null
-          }))
-          .catch(({ message }) => this.setState({
-            error: message,
-            loadingUser: false,
-            loadingPosts: false
-          }))
-      }
+export default function User() {
+  const { id } = queryString.parse(location.search);
+  const [state, dispatch] = React.useReducer(userReducer, {
+    user: null,
+    loadingUser: true,
+    posts: null,
+    loadingPosts: true,
+    error: null,
+  });
 
-    render() {
-        const {user, posts, loadingPosts, loadingUser, error} = this.state 
-        
-        if (error) {
-            return <p className='center-text error'>{error}</p>
-          }
+  React.useEffect(() => {
+    dispatch({ type: 'fetch' });
 
-    return( 
+    fetchUser(id)
+      .then(user => {
+        dispatch({ type: 'user', user });
+
+        return fetchPosts(user.submitted.slice(0, 30));
+      })
+      .then(posts => dispatch({ type: 'posts', posts }))
+      .catch(({ message }) => dispatch({ type: 'error', error: message }));
+  }, [id]);
+
+  const { user, posts, loadingPosts, loadingUser, error } = state;
+
+  if (error) {
+    return <p className="center-text error">{error}</p>;
+  }
+
+  return (
+    <React.Fragment>
+      {loadingUser === true ? (
+        <Loading />
+      ) : (
         <React.Fragment>
-            {loadingUser === true 
-                ? <Loading /> 
-                : <React.Fragment>
-                    <h1 className="header">{user.id}</h1>
-                    <div className='meta-info-light'>
-                        <span>joined <b>{formatDate(user.created)}</b></span>
-                        <span>has <b>{user.karma.toLocaleString()}</b> karma</span>
-                    </div>
-                    <p dangerouslySetInnerHTML={{__html: user.about}}></p>
-                </React.Fragment>}
-            {loadingPosts === true
-                ? <Loading />
-            : <React.Fragment>
-                <h2>Posts</h2>
-                <PostList posts={posts} />
-            </React.Fragment>
-                }
+          <h1 className="header">{user.id}</h1>
+          <div className="meta-info-light">
+            <span>
+              joined <b>{formatDate(user.created)}</b>
+            </span>
+            <span>
+              has <b>{user.karma.toLocaleString()}</b> karma
+            </span>
+          </div>
+          <p dangerouslySetInnerHTML={{ __html: user.about }} />
         </React.Fragment>
-        
-        )
-    }
+      )}
+      {loadingPosts === true ? (
+        <Loading />
+      ) : (
+        <React.Fragment>
+          <h2>Posts</h2>
+          <PostList posts={posts} />
+        </React.Fragment>
+      )}
+    </React.Fragment>
+  );
 }

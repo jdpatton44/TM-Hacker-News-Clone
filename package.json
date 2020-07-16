@@ -22,6 +22,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@emotion/core": "^10.0.28",
     "prop-types": "^15.7.2",
     "query-string": "^6.4.0",
     "react": "^16.8.4",
