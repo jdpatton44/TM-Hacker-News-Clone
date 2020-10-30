@@ -5,6 +5,9 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { ThemeProvider } from './contexts/theme';
 import Nav from './components/Nav';
 import Loading from './components/Loading';
+import Pickem from './components/Pickem';
+import Account from './components/Account';
+import Standings from './components/Standings';
 
 const Posts = React.lazy(() => import('./components/Posts'));
 const Post = React.lazy(() => import('./components/Post'));
@@ -25,7 +28,9 @@ function App() {
 
             <React.Suspense fallback={<Loading />}>
               <Switch>
-                <Route exact path="/" render={() => <Posts type="top" />} />
+                <Route exact path="/" render={() => <Pickem />} />
+                <Route path="/account" render={() => <Account />} />
+                <Route path="/standings" render={() => <Standings />} />
                 <Route path="/new" render={() => <Posts type="new" />} />
                 <Route path="/post" component={Post} />
                 <Route path="/user" component={User} />
