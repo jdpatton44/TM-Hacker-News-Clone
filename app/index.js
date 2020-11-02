@@ -8,6 +8,7 @@ import Loading from './components/Loading';
 import Pickem from './components/Pickem';
 import Account from './components/Account';
 import Standings from './components/Standings';
+import Login from './components/Login';
 
 const Posts = React.lazy(() => import('./components/Posts'));
 const Post = React.lazy(() => import('./components/Post'));
@@ -29,6 +30,7 @@ function App() {
             <React.Suspense fallback={<Loading />}>
               <Switch>
                 <Route exact path="/" render={() => <Pickem />} />
+                <Route exact path="/Login" render={() => <Login />} />
                 <Route path="/account" render={() => <Account />} />
                 <Route path="/standings" render={() => <Standings />} />
                 <Route path="/new" render={() => <Posts type="new" />} />
