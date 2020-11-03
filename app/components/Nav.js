@@ -17,8 +17,13 @@ export default function Nav({ toggleTheme }) {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/new" activeStyle={activeStyle} exact className="nav-link">
-            New
+          <NavLink to="/account" activeStyle={activeStyle} exact className="nav-link">
+            Account
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/standings" activeStyle={activeStyle} exact className="nav-link">
+            Standings
           </NavLink>
         </li>
       </ul>

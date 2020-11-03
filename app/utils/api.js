@@ -50,3 +50,8 @@ export function fetchPosts (ids) {
     return Promise.all(ids.map(fetchItem))
       .then((posts) => removeDeleted(onlyPosts(removeDead(posts))))
   }
+
+  export function fetchScoreboard () {
+    return fetch(`http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard`)
+      .then((res) => res.json())
+}
