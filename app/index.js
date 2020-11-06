@@ -31,7 +31,7 @@ function App() {
 
             <React.Suspense fallback={<Loading />}>
               <Switch>
-                <Route exact path="/" render={() => <Pickem />} />
+                <Route exact path="/pickem" render={({ match }) => <Pickem  match={match} />} />
                 <Route exact path="/login" render={() => <Login />} />
                 <Route exact path="/register" render={() => <Register />} />
                 <Route path="/account" render={() => <Account />} />

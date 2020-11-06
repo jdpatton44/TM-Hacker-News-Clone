@@ -5,3 +5,24 @@ export function formatDate (timestamp) {
         minute: 'numeric'
       })
   }
+
+export async function checkLogin (username, accessString) {
+  const login = {
+    user: '',
+    error: null,
+  }
+  try {
+    const user = await axios.get('http://localhost:3004/findUser', {
+    params: {
+      username,
+    },
+    headers: { Authorization: `JWT ${accessString}` },
+    })
+    login.user = user;
+    return login;
+  } catch (error) {
+    console.error(error.response.data);
+    login.error = error.response.data;
+    return login;
+    };
+}
