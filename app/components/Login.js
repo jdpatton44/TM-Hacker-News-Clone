@@ -67,7 +67,7 @@ export default function Login() {
             setLoggedIn(false);
             }
         try {
-            const response = await axios.post('http://localhost:3003/loginUser', {
+            const response = await axios.post('http://localhost:3004/loginUser', {
                 username,
                 password,
             });
@@ -128,6 +128,6 @@ export default function Login() {
         </LoginContainer>
         )
     } else {
-        return <Redirect to={`/`} />;
+        return <Redirect to={`/pickem`} />;
     }
 }
