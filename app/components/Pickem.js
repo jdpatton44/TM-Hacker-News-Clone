@@ -3,8 +3,9 @@ import { fetchScoreboard } from '../utils/api';
 import Loading from './Loading';
 import Event from './Event';
 import styled from 'styled-components';
+import axios from 'axios'
 import { checkLogin } from '../utils/helpers';
-import { useParams } from 'react-router-dom';
+
 
 const EventContainer = styled.div`
     display:grid;
@@ -54,33 +55,39 @@ export default function Pickem({match}) {
             error: null, 
             loading: true 
         });
-    //let { match } = useParams();
-    console.log('params - ', match)
-    const [user, setUser ] = React.useState('');
+    const [auth, setAuth ] = React.useState(false);
+    const { username }= match.params;
     
-    // const getUsername = () => {
-    //   const username = props.match.params.username
-    // }
+    async function getAuth() {
+      const accessString = localStorage.getItem('JWT');
+      const { data } = await axios.get('http://localhost:3004/findUser', {
+        params: {
+          username,
+        },
+        headers: { Authorization: `JWT ${accessString}` },
+      });
+      setAuth(data.auth);
+    }
 
     React.useEffect(() => {
-      const accessString = localStorage.getItem('JWT');
-      
-      //const username = match.params.username;
-      
-      // console.log(checkLogin(username, accessString))
-      
+      getAuth();
+    },[username])
+
+    React.useEffect(() => {
       dispatch({type: 'fetch'});
+      fetchScoreboard()
+        .then(scores => {dispatch({ type: 'success', scores })})
+        .catch(({ message }) => dispatch({ type: 'error', error: message }));
 
-        fetchScoreboard()
-            .then(scores => {dispatch({ type: 'success', scores })})
-            .catch(({ message }) => dispatch({ type: 'error', error: message }));
-
-    },[])
+    },[]);
 
     const { scores, error, loading } = state;
     
     if (loading) {
         return <Loading loading={loading} />;
+    }
+    if (!auth) {
+      return <p>Please login</p>
     }
     console.log(scores.events);
     return (
