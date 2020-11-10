@@ -9,6 +9,7 @@ import Pickem from './components/Pickem';
 import Account from './components/Account';
 import Standings from './components/Standings';
 import Login from './components/Login';
+import Lines from './components/Lines';
 import Register from './components/Register';
 import 'regenerator-runtime/runtime';
 
@@ -31,10 +32,11 @@ function App() {
 
             <React.Suspense fallback={<Loading />}>
               <Switch>
-                <Route exact path="/pickem" render={({ match }) => <Pickem  match={match} />} />
+                <Route exact path="/pickem/:username" render={({ match }) => <Pickem  match={match} />} />
+                <Route exact path="/lines" render={() => <Lines />} />
                 <Route exact path="/login" render={() => <Login />} />
                 <Route exact path="/register" render={() => <Register />} />
-                <Route path="/account" render={() => <Account />} />
+                <Route path="/account/:username" render={() => <Account />} />
                 <Route path="/standings" render={() => <Standings />} />
                 <Route path="/new" render={() => <Posts type="new" />} />
                 <Route path="/post" component={Post} />

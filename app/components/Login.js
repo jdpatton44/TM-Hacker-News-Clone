@@ -128,6 +128,6 @@ export default function Login() {
         </LoginContainer>
         )
     } else {
-        return <Redirect to={`/pickem`} />;
+        return <Redirect to={`/pickem/${username}`} />;
     }
 }
