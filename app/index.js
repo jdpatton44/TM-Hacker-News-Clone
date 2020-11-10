@@ -36,7 +36,7 @@ function App() {
                 <Route exact path="/lines" render={() => <Lines />} />
                 <Route exact path="/login" render={() => <Login />} />
                 <Route exact path="/register" render={() => <Register />} />
-                <Route path="/account" render={() => <Account />} />
+                <Route path="/account/:username" render={() => <Account />} />
                 <Route path="/standings" render={() => <Standings />} />
                 <Route path="/new" render={() => <Posts type="new" />} />
                 <Route path="/post" component={Post} />

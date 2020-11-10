@@ -24,3 +24,29 @@ export async function checkLogin (username, accessString) {
     return error;
     };
 }
+
+export async function updateSingleLine(gameId, newLine) {
+  const postMessage = await axios.post('http://localhost:3004/setSingleLine', {
+    gameId,
+    newLine
+  }).then((res) => {
+    console.log('helper', res.data)
+    return res.data;
+  }, (err) => {
+    return err;
+  });
+  return postMessage;
+}
+
+export async function updateAllLines(games) {
+  console.log('games -- ', games);
+  const postMessage = await axios.post('http://localhost:3004/setAllLines', {
+    games
+  }).then((res) => {
+    console.log('helper', res.data)
+    return res.data;
+  }, (err) => {
+    return err;
+  });
+  return postMessage;
+}
