@@ -5,14 +5,14 @@ import Event from './Event';
 import styled from 'styled-components';
 import axios from 'axios'
 import { checkLogin } from '../utils/helpers';
+import { Link, Redirect } from 'react-router-dom';
 
 
 const EventContainer = styled.div`
     display:grid;
     grid-template-columns: 1fr 1fr;
-    grid-column-gap: 1rem;
-    grid-row-gap: 1rem;
-}
+    grid-column-gap: 2rem;
+    grid-row-gap: 2rem;
 `
 const WeekDiv = styled.h1`
     align-content: center;  
@@ -68,9 +68,13 @@ export default function Pickem({match}) {
       });
       setAuth(data.auth);
     }
+    async function getBets(username) {
+      // const { data } = await axios.get('http://localhost:3004/getBets/${username}`)
+    }
 
     React.useEffect(() => {
       getAuth();
+      getBets(username);
     },[username])
 
     React.useEffect(() => {
@@ -87,7 +91,7 @@ export default function Pickem({match}) {
         return <Loading loading={loading} />;
     }
     if (!auth) {
-      return <p>Please login</p>
+      return <Link to={`/login`} />
     }
     console.log(scores.events);
     return (
@@ -95,7 +99,7 @@ export default function Pickem({match}) {
             <WeekDiv>Week {scores.week.number}</WeekDiv>
             <EventContainer>
             {scores.events.map(event => {
-                return <Event key={event.id} event={event} />
+                return <Event key={event.id} event={event} user={username} />
             })}
             </EventContainer>
         </>
