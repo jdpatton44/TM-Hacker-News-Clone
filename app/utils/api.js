@@ -1,5 +1,6 @@
 const api = `https://hacker-news.firebaseio.com/v0`
 const json = '.json?print=pretty'
+const axios = require('axios');
 
 function removeDead (posts) {
     return posts.filter(Boolean).filter(({ dead }) => dead !== true)
@@ -41,18 +42,37 @@ export function fetchMainPosts (type) {
       .then((posts) => removeDeleted(onlyPosts(removeDead(posts))))
   }
   
-export function fetchUser (id) {
-    return fetch(`${api}/user/${id}${json}`)
-      .then((res) => res.json())
-  }
+// export function fetchUser (id) {
+//     return fetch(`${api}/user/${id}${json}`)
+//       .then((res) => res.json())
+//   }
   
 export function fetchPosts (ids) {
     return Promise.all(ids.map(fetchItem))
       .then((posts) => removeDeleted(onlyPosts(removeDead(posts))))
   }
 
-  export function fetchScoreboard () {
+export function fetchScoreboard () {
     return fetch(`http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard`)
-      .then((res) => res.json())
+      .then((scores) => scores.json())
 }
 
+export async function postBet(user, event, team, amount) {
+  console.log('placing bet...')
+  const accessString = localStorage.getItem('JWT');
+  try { 
+    const bet = await axios.post('http://localhost:3004/placeBet', {
+      user,
+      event,
+      team,
+      amount,
+    },
+    {headers: { Authorization: `JWT ${accessString}` }},);
+    console.log('place bet', res.data)
+    return res.data;
+  }
+  catch (err) {
+    console.log(err);
+    return err;
+  }
+}

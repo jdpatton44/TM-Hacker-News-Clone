@@ -22,6 +22,33 @@ const StyledInputsDiv = styled.div`
     }
 `;
 
+const StyledForm = styled.form`
+    box-sizing:border-box;
+    align-content: center;
+    input /*[type=text] */ {
+        padding:10px;
+        border:0;
+        box-shadow:0 0 15px 4px rgba(0,0,0,0.1);
+        padding:10px;
+        border-radius:10px;
+        width: 100%;
+        margin: .5rem
+    }
+    button {
+        align-self: center;
+        appearance:none;
+        -webkit-appearance:none;
+        padding:10px;
+        border:none;
+        background-color:#3F51B5;
+        color:#fff;
+        font-weight:600;
+        border-radius:5px;
+        width:15%;
+        margin: .5rem;
+    }
+`
+
 export default function Register() {
     const [ first, setFirst ] = React.useState('');
     const [ last, setLast ] = React.useState('');
@@ -35,7 +62,7 @@ export default function Register() {
     }
     return (
     <StyledFormContainer>
-        <form onSubmit={handleSubmit}>
+        <StyledForm onSubmit={handleSubmit}>
             <StyledInputsDiv>
                 <label htmlFor="first">First Name </label>
                 <input id="first" value={first} onChange={(e) => setFirst(e.current.target.value)} type="text" />
@@ -45,8 +72,9 @@ export default function Register() {
                 <input id="username" value={username} onChange={(e) => setUsername(e.current.target.value)} type="text" />
                 <label htmlFor="password">Password </label>
                 <input id="password" value={password} onChange={(e) => setPassword(e.current.target.value)} type="password" />
+                <button type='submit'>Register</button>
             </StyledInputsDiv>
-        </form>
+        </StyledForm>
     </StyledFormContainer>
     )
 }

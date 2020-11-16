@@ -1,6 +1,7 @@
 import Axios from 'axios';
 import React from 'react'
 import styled from 'styled-components'
+import { postBet } from '../utils/api'
 
 const Card = styled.div`
     box-shadow: 0 10px 16px 0 rgba(0,0,0,0.6);
@@ -66,7 +67,7 @@ const SubmitButton = styled.button`
     margin: .5rem;
 `
 
-export default function Event({event}) {
+export default function Event({event, user}) {
     const eventDate = new Date (event.competitions[0].date);
     const homeTeam = event.competitions[0].competitors[0].team;
     const visitingTeam = event.competitions[0].competitors[1].team;
@@ -76,7 +77,7 @@ export default function Event({event}) {
 
     const [ homeLogoClass, setHomeLogoClass ] = React.useState('');
     const [ visitLogoClass, setVisitLogoClass ] = React.useState('');
-    const [ bet, setBet ] = React.useState(null);
+    const [ betAmount, setBetAmount ] = React.useState(0);
 
     function handleCheck(e, id) {
         if(id === visitingTeam.id && homeCheck.current.checked) {
@@ -104,14 +105,27 @@ export default function Event({event}) {
 
     }
 
-    async function placeBet(username, game) {
+    async function placeBet(e) {
         //const accessString = localStorage.getItem('JWT');
-        console.log(`bet on game ${event.id} placed - ${bet}`)
+        e.preventDefault();
+        let team;
+        if (!homeCheck.current.checked && !visitCheck.current.checked) {
+            alert("Please select a team for this wager.");
+            return
+        };
+        if (betAmount < 1) {
+            alert("Please enter an amount to wager.");
+            return
+        };
+        if (homeCheck.current.checked) {team = homeTeam.id};
+        if (visitCheck.current.checked) {team = visitingTeam.id};
+        console.log(`${user} bet on game ${event.id} placed - ${betAmount} on ${team}.`)
+        await postBet(user, event.id, team, betAmount);
     }
 
     return (
         <Card>
-            <form >
+            <form onSubmit={(e) => placeBet(e)}>
                 <CardHeader>{event.name}</CardHeader>
                 <CardImageDiv>
                     <TeamDiv>
@@ -139,7 +153,7 @@ export default function Event({event}) {
                 <WagerBox className="wagerbox">
                     <InputBox>
                         <label><strong>Wager</strong></label>
-                        <input value={bet} type="number" placeholder="How much???" onChange={() => setBet(e.current.target.value)}/>
+                        <input value={betAmount || ''} type="number" placeholder="How much???" onChange={(e) => {console.log(e.currentTarget.value); setBetAmount(e.currentTarget.value)}}/>
                         <SubmitButton type='submit' >Place your bet!</SubmitButton>
                     </InputBox>
                 </WagerBox>

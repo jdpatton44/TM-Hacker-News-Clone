@@ -55,27 +55,37 @@ export default function Pickem({match}) {
             error: null, 
             loading: true 
         });
-    const [auth, setAuth ] = React.useState(false);
-    const { username }= match.params;
+    const [user, setUser ] = React.useState();
+    const [userLoading, setUserLoading] = React.useState(true)
+    const [userError, setUserError] = React.useState(false)
     
-    async function getAuth() {
+    const { username } = match.params;
+    
+    async function getUser() {
       const accessString = localStorage.getItem('JWT');
-      const { data } = await axios.get('http://localhost:3004/findUser', {
-        params: {
-          username,
-        },
-        headers: { Authorization: `JWT ${accessString}` },
-      });
-      setAuth(data.auth);
+      try {
+          const { data } = await axios.get('http://localhost:3004/findUser', {
+          params: {
+            username,
+          },
+          headers: { Authorization: `JWT ${accessString}` },
+        });
+        setUser(data);
+        setUserLoading(false);
+      } catch (err) {
+        console.log(err)
+        setUserLoading(false);
+        setUserError(err);
+      }
     }
     async function getBets(username) {
       // const { data } = await axios.get('http://localhost:3004/getBets/${username}`)
     }
 
     React.useEffect(() => {
-      getAuth();
-      getBets(username);
-    },[username])
+      getUser();
+      // getBets();
+    },[])
 
     React.useEffect(() => {
       dispatch({type: 'fetch'});
@@ -87,21 +97,22 @@ export default function Pickem({match}) {
 
     const { scores, error, loading } = state;
     
-    if (loading) {
+    if (userLoading || loading) {
         return <Loading loading={loading} />;
     }
-    if (!auth) {
-      return <Link to={`/login`} />
+    if (userError) {
+      return <Redirect to={`/login`} />
     }
     console.log(scores.events);
     return (
         <>
-            <WeekDiv>Week {scores.week.number}</WeekDiv>
-            <EventContainer>
-            {scores.events.map(event => {
-                return <Event key={event.id} event={event} user={username} />
-            })}
-            </EventContainer>
+          <h3>{user.points} Points</h3>
+          <WeekDiv>Week {scores.week.number}</WeekDiv>
+          <EventContainer>
+          {scores.events.map(event => {
+              return <Event key={event.id} event={event} user={user.id} />
+          })}
+          </EventContainer>
         </>
     )
 }
