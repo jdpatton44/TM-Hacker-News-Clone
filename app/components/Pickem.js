@@ -5,14 +5,14 @@ import Event from './Event';
 import styled from 'styled-components';
 import axios from 'axios'
 import { checkLogin } from '../utils/helpers';
+import { Link, Redirect } from 'react-router-dom';
 
 
 const EventContainer = styled.div`
     display:grid;
     grid-template-columns: 1fr 1fr;
-    grid-column-gap: 1rem;
-    grid-row-gap: 1rem;
-}
+    grid-column-gap: 2rem;
+    grid-row-gap: 2rem;
 `
 const WeekDiv = styled.h1`
     align-content: center;  
@@ -55,23 +55,37 @@ export default function Pickem({match}) {
             error: null, 
             loading: true 
         });
-    const [auth, setAuth ] = React.useState(false);
-    const { username }= match.params;
+    const [user, setUser ] = React.useState();
+    const [userLoading, setUserLoading] = React.useState(true)
+    const [userError, setUserError] = React.useState(false)
     
-    async function getAuth() {
+    const { username } = match.params;
+    
+    async function getUser() {
       const accessString = localStorage.getItem('JWT');
-      const { data } = await axios.get('http://localhost:3004/findUser', {
-        params: {
-          username,
-        },
-        headers: { Authorization: `JWT ${accessString}` },
-      });
-      setAuth(data.auth);
+      try {
+          const { data } = await axios.get('http://localhost:3004/findUser', {
+          params: {
+            username,
+          },
+          headers: { Authorization: `JWT ${accessString}` },
+        });
+        setUser(data);
+        setUserLoading(false);
+      } catch (err) {
+        console.log(err)
+        setUserLoading(false);
+        setUserError(err);
+      }
+    }
+    async function getBets(username) {
+      // const { data } = await axios.get('http://localhost:3004/getBets/${username}`)
     }
 
     React.useEffect(() => {
-      getAuth();
-    },[username])
+      getUser();
+      // getBets();
+    },[])
 
     React.useEffect(() => {
       dispatch({type: 'fetch'});
@@ -83,21 +97,22 @@ export default function Pickem({match}) {
 
     const { scores, error, loading } = state;
     
-    if (loading) {
+    if (userLoading || loading) {
         return <Loading loading={loading} />;
     }
-    if (!auth) {
-      return <p>Please login</p>
+    if (userError) {
+      return <Redirect to={`/login`} />
     }
     console.log(scores.events);
     return (
         <>
-            <WeekDiv>Week {scores.week.number}</WeekDiv>
-            <EventContainer>
-            {scores.events.map(event => {
-                return <Event key={event.id} event={event} />
-            })}
-            </EventContainer>
+          <h3>{user.points} Points</h3>
+          <WeekDiv>Week {scores.week.number}</WeekDiv>
+          <EventContainer>
+          {scores.events.map(event => {
+              return <Event key={event.id} event={event} user={user.id} />
+          })}
+          </EventContainer>
         </>
     )
 }

@@ -40,11 +40,24 @@ const ButtonContainer = styled.div`
     display: grid;
     justify-content: center;
     align-content: center;
-`
-const ButtonSubContainer = styled.div`
-    display: grid;
-    grid-template-rows: 1fr 1fr;
-    align-content: center;
+    grid-gap: .5rem;
+    grid-template-areas: 
+        "a a a a"
+        "b b c c";
+    .login-button {
+        grid-area: a;
+        
+    }
+    .register-button {
+        grid-area: b;
+    }
+    .forgot-button {
+        grid-area: c;
+    }
+    .link-button {
+        text-decoration:none;
+        color: white;
+    }
 `
 
 export default function Login() {
@@ -93,7 +106,8 @@ export default function Login() {
         return (
         <LoginContainer>
             <LoginForm onSubmit={loginUser}>
-                <input 
+                <input  
+                    required 
                     id="username"
                     label="username"
                     value={username}
@@ -102,6 +116,7 @@ export default function Login() {
                     type="text" 
                 />
                 <input 
+                    required 
                     id="password"
                     label="password"
                     value={password}
@@ -110,19 +125,17 @@ export default function Login() {
                     type="password"
                 />
                 <ButtonContainer>
-                    <button type="submit" >Log In</button>
-                    <ButtonSubContainer>
-                        <button>
-                            <Link to={`/register`}>
-                            Register Here
-                            </Link>
-                        </button>
-                        <button>
-                            <Link to={`/forgot`}>
-                            Forgot Password?
-                            </Link>
-                        </button>
-                    </ButtonSubContainer>
+                    <button type="submit" className="login-button">Log In</button>
+                    <button className="register-button">
+                        <Link className="link-button" to={`/register`}>
+                        Register Here
+                        </Link>
+                    </button>
+                    <button className="forgot-button">
+                        <Link className="link-button" to={`/forgot`}>
+                        Forgot Password?
+                        </Link>
+                    </button>
                 </ButtonContainer>
             </LoginForm>
         </LoginContainer>
